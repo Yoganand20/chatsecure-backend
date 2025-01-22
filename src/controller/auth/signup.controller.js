@@ -1,6 +1,6 @@
-import User from "../model/user.model.js";
+import User from "../../model/user.model.js";
 import bcrypt from "bcrypt";
-import generateToken from "../utils/generateToken.js";
+import generateToken from "../../utils/generateToken.js";
 
 export default async function signup(req, res) {
   console.log("Crating a new user");

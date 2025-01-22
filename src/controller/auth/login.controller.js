@@ -1,5 +1,5 @@
-import User from "../model/user.model.js";
-import generateToken from "../utils/generateToken.js";
+import User from "../../model/user.model.js";
+import generateToken from "../../utils/generateToken.js";
 import bcrypt from "bcrypt";
 
 export default async function login(req, res){
