@@ -1,6 +1,8 @@
 import User from "../../model/user.model.js";
 import bcrypt from "bcrypt";
 import generateToken from "../../utils/generateToken.js";
+import ContactList from "../../model/contactList.model.js";
+import mongoose from "mongoose";
 
 export default async function signup(req, res) {
   console.log("Crating a new user");
@@ -36,12 +38,22 @@ export default async function signup(req, res) {
       await newUser.save();
       console.log("User created successfully");
 
+      const newContactList = new ContactList({
+        owner: newUser._id,
+        contacts: [],
+      });
+  
+      await newContactList.save();
+      console.log("Created empty contact list for user:", newUser._id);
+
+      
       res.status(201).json({
         _id: newUser._id,
         fullName: newUser.fullName,
         email: newUser.email,
         profilePic: newUser.profilePic,
       });
+
     } else {
       res.status(400).json({ message: "Invalid user data" });
     }
