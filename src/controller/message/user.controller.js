@@ -5,10 +5,10 @@ import Room from "../../model/room.model.js";
 
 export const getContactsList = async (req, res) => {
   try {
-    console.log("User ID:", req.user._id); // Log the user ID for debugging
+    
     const contactList = await ContactList.find({ owner: req.user._id }).populate("contacts.user", "fullName email profilePic").populate("contacts.personalRoomId", "name users");
     if(contactList || contactList.length != 0) {
-      console.log(contactList[0].owner+" : "+contactList[0].contacts);
+     // console.log(contactList[0].owner+" : "+contactList[0].contacts);
     }
     else{
       console.log("Empty contact list for user:", req.user._id);
@@ -112,6 +112,26 @@ export const addToContactsList = async (req, res) => {
       // Add new contact
       contactList.contacts.push({ user: contactId, personalRoomId: newRoom._id });
     }
+    await contactList.save();
+    
+
+    contactList = await ContactList.findOne({ owner: contactId });
+
+    if (!contactList) {
+      contactList = new ContactList({
+        owner: contactId,
+        contacts: [{ user: userId, personalRoomId: newRoom._id }],
+      });
+    } else {
+      // Check if contact already exists
+      if (contactList.contacts.some((contact) => contact.user.toString() === userId.toString())) {
+        return res.status(409).json({ error: "Contact already exists in your list" });
+      }
+
+      // Add new contact
+      contactList.contacts.push({ user: userId, personalRoomId: newRoom._id });
+    }
+
 
     // Save the contact list
     await contactList.save();

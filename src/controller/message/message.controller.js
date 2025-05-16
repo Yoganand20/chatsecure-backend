@@ -6,7 +6,7 @@ export const getMessagesByRoom = async (req, res) => {
     const {roomId}=req.params;
     const receiverId = req.user._id;
     //access messages stored on redis
-    const messages = Message.find({roomId:roomId,receiverId:receiverId});
+    const messages = await Message.find({roomId:roomId});
     //send json object list of all the message in that group for that user
     res.status(200).json(messages);
   } catch (error) {
@@ -85,7 +85,7 @@ export const postMessages = async (req, res) => {
     const {text,receiverId} = req.body;
     const {roomId} = req.params;
     const senderId = req.user._id;
-    //code to store message in mongoDB
+    //store message in mongoDB
     const newMessage = await Message.create({
       text,
       senderId,
